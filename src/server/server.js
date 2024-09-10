@@ -1,7 +1,6 @@
 const io = require("socket.io")(process.env.PORT || 3001, {
   cors: {
-    origin:
-      "https://planning-poker-o30zvj9b8-davi-quirinos-projects.vercel.app/",
+    origin: "https://planning-poker-weld.vercel.app/",
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true,
