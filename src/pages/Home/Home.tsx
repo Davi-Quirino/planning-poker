@@ -213,7 +213,7 @@ const Home: React.FC = () => {
 
   return (
     <div>
-      <h1>Welcome to Planning Poker</h1>
+      <h1>Bem vindo to Planning Poker</h1>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <UserForm onSubmit={handleJoin} />
       </Modal>
