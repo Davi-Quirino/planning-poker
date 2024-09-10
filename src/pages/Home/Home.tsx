@@ -14,7 +14,7 @@ import tableImage from "../../assets/images/table.png";
 import ResultsModal from "../../components/ResultsModal"; // Importando o novo modal
 
 // Definindo a interface do jogador
-interface Player {
+interface PlayerGame {
   id: number;
   name: string;
   role: string;
@@ -26,7 +26,7 @@ interface Player {
 }
 
 const Home: React.FC = () => {
-  const [players, setPlayers] = useState<Player[]>([]);
+  const [players, setPlayers] = useState<PlayerGame[]>([]);
   const [currentPlayerId, setCurrentPlayerId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(true);
   const [isRevealed, setIsRevealed] = useState<boolean>(false);
@@ -39,7 +39,7 @@ const Home: React.FC = () => {
     socketRef.current = io("http://planning-poker-weld.vercel.app");
 
     // Recebendo a lista de jogadores ao conectar
-    socketRef.current.on("currentPlayers", (players: Player[]) => {
+    socketRef.current.on("currentPlayers", (players: PlayerGame[]) => {
       setPlayers(players);
     });
 
@@ -61,12 +61,12 @@ const Home: React.FC = () => {
     });
 
     // Quando um novo jogador entrar
-    socketRef.current.on("playerJoined", (player: Player) => {
+    socketRef.current.on("playerJoined", (player: PlayerGame) => {
       setPlayers((prevPlayers) => [...prevPlayers, player]);
     });
 
     // Atualiza o estado de um jogador que selecionou uma carta
-    socketRef.current.on("cardSelected", (updatedPlayer: Player) => {
+    socketRef.current.on("cardSelected", (updatedPlayer: PlayerGame) => {
       setPlayers((prevPlayers) =>
         prevPlayers.map((player) =>
           player.id === updatedPlayer.id ? updatedPlayer : player
@@ -116,7 +116,7 @@ const Home: React.FC = () => {
       return;
     }
 
-    const newPlayer: Player = {
+    const newPlayer: PlayerGame = {
       id: Date.now(),
       name,
       role,
