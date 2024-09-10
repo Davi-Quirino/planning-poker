@@ -1,4 +1,5 @@
-const io = require("socket.io")(process.env.PORT || 3001, {
+const PORT = process.env.PORT || 3001;
+const io = require("socket.io")(PORT || 3001, {
   cors: {
     origin: "https://planning-poker-weld.vercel.app",
     methods: ["GET", "POST"],
@@ -6,6 +7,8 @@ const io = require("socket.io")(process.env.PORT || 3001, {
     credentials: true,
   },
 });
+
+console.log(`Socket.IO server running on port ${PORT}`);
 
 let players = [];
 let isRevealed = false; // Estado global que controla se as cartas estão reveladas
