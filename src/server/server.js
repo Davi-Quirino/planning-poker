@@ -1,6 +1,6 @@
 const io = require("socket.io")(3001, {
   cors: {
-    origin: "http://planning-poker-weld.vercel.app",
+    origin: "https://magenta-kelpie-e2e1b7.netlify.app",
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true,
