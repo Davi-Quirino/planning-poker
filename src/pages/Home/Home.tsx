@@ -36,7 +36,10 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     // Inicializando a conexão WebSocket
-    socketRef.current = io("http://localhost:3001");
+    socketRef.current = io(
+      process.env.NEXT_PUBLIC_SOCKET_URL ||
+        "https://planning-poker-c3spwj78m-davi-quirinos-projects.vercel.app/"
+    );
 
     // Recebendo a lista de jogadores ao conectar
     socketRef.current.on("currentPlayers", (players: Player[]) => {

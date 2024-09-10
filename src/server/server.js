@@ -1,6 +1,7 @@
-const io = require("socket.io")(3001, {
+const io = require("socket.io")(process.env.PORT || 3001, {
   cors: {
-    origin: "http://localhost:3000",
+    origin:
+      "https://planning-poker-c3spwj78m-davi-quirinos-projects.vercel.app/",
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true,
