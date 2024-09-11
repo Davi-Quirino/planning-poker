@@ -5,21 +5,28 @@ const { Server } = require("socket.io");
 // Configurando o servidor express
 const app = express();
 const server = http.createServer(app);
-//const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "https://planning-poker-weld.vercel.app", // Substitua pela URL do seu front-end
+    methods: ["GET", "POST"],
+    allowedHeaders: ["my-custom-header"],
+    credentials: true,
+  },
+});
 
 // Rota padrão GET
 app.get("/", (req, res) => {
   res.send("Bem-vindo ao servidor com Socket.io!");
 });
 
-const io = require("socket.io")(443, {
-  cors: {
-    origin: "https://planning-poker-weld.vercel.app/",
-    methods: ["GET", "POST"],
-    allowedHeaders: ["my-custom-header"],
-    credentials: true,
-  },
-});
+// const io = require("socket.io")(443, {
+//   cors: {
+//     origin: "https://planning-poker-weld.vercel.app/",
+//     methods: ["GET", "POST"],
+//     allowedHeaders: ["my-custom-header"],
+//     credentials: true,
+//   },
+// });
 
 let players = [];
 let isRevealed = false; // Estado global que controla se as cartas estão reveladas
