@@ -37,10 +37,10 @@ const Home: React.FC = () => {
   useEffect(() => {
     // Inicializando a conexão WebSocket
     socketRef.current = io("https://planning-poker-service.vercel.app/", {
-      transports: ["websocket", "polling"], // Certifique-se de que websocket está habilitado
-      reconnection: true, // Permite reconexão automática
-      reconnectionAttempts: 5, // Número de tentativas de reconexão
-      reconnectionDelay: 1000, // Atraso entre as tentativas de reconexão
+      transports: ["websocket"], // Certifique-se de que websocket está habilitado
+      // reconnection: true, // Permite reconexão automática
+      // reconnectionAttempts: 5, // Número de tentativas de reconexão
+      // reconnectionDelay: 1000, // Atraso entre as tentativas de reconexão
     });
 
     // Recebendo a lista de jogadores ao conectar
