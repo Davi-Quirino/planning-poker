@@ -9,7 +9,7 @@ const app = express();
 // Configuração de CORS para Express
 app.use(
   cors({
-    origin: "https://planning-poker-weld.vercel.app", // Substitua pela URL do seu front-end
+    //origin: "https://planning-poker-weld.vercel.app", // Substitua pela URL do seu front-end
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true,
