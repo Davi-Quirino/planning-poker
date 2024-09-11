@@ -9,7 +9,7 @@ const app = express();
 // Configuração de CORS para Express
 app.use(
   cors({
-    //origin: "https://planning-poker-weld.vercel.app", // Substitua pela URL do seu front-end
+    origin: "https://planning-poker-weld.vercel.app", // Substitua pela URL do seu front-end
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true,
@@ -26,16 +26,22 @@ const io = new Server(server, {
     allowedHeaders: ["my-custom-header"],
     credentials: true,
   },
-  pingInterval: 30000, // Intervalo entre os pings
-  pingTimeout: 60000, // Tempo antes de considerar a sessão perdida
-  transports: ["websocket", "polling"],
+  pingInterval: 25000, // Intervalo de ping a cada 25 segundos
+  pingTimeout: 50000, // Desconecta se não receber pong em 50 segundos
+  transports: ["websocket", "polling"], // Ativa WebSocket e polling como fallback
 });
 
 let players = [];
 let isRevealed = false; // Estado global que controla se as cartas estão reveladas
 
+// Função para log detalhado de conexões e desconexões
+io.use((socket, next) => {
+  console.log("Nova conexão:", socket.id); // Log de novas conexões
+  next();
+});
+
 io.on("connection", (socket) => {
-  console.log("A user connected");
+  console.log(`Usuário conectado: ${socket.id}`);
 
   // Envia a lista completa de jogadores ao novo cliente
   socket.emit("currentPlayers", players);
@@ -69,7 +75,7 @@ io.on("connection", (socket) => {
 
   // Lida com a desconexão do jogador e o remove da lista
   socket.on("disconnect", () => {
-    console.log("A user disconnected");
+    console.log(`Usuário desconectado: ${socket.id}`);
     players = players.filter((player) => player.socketId !== socket.id); // Remove o jogador da lista
     io.emit("playerDisconnected", socket.id); // Notifica todos os clientes sobre a desconexão
   });
