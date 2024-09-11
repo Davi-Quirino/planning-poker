@@ -1,27 +1,32 @@
 const express = require("express");
 const http = require("http");
+const cors = require("cors"); // Importa o pacote CORS
 const { Server } = require("socket.io");
 
 // Configurando o servidor express
 const app = express();
+
+// Configuração de CORS para Express
+app.use(
+  cors({
+    origin: "https://planning-poker-weld.vercel.app", // Substitua pela URL do seu front-end
+    methods: ["GET", "POST"],
+    allowedHeaders: ["my-custom-header"],
+    credentials: true,
+  })
+);
+
 const server = http.createServer(app);
+
+// Configurando o Socket.io com CORS
 const io = new Server(server, {
   cors: {
-    origin: "https://planning-poker-weld.vercel.app/", // Substitua pela URL do seu front-end
+    origin: "https://planning-poker-weld.vercel.app", // Substitua pela URL do seu front-end
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true,
   },
 });
-
-// const io = require("socket.io")(443, {
-//   cors: {
-//     origin: "https://planning-poker-weld.vercel.app/",
-//     methods: ["GET", "POST"],
-//     allowedHeaders: ["my-custom-header"],
-//     credentials: true,
-//   },
-// });
 
 let players = [];
 let isRevealed = false; // Estado global que controla se as cartas estão reveladas
@@ -74,7 +79,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// Servidor ouvindo na porta 3000
+// Servidor ouvindo na porta 443
 const PORT = process.env.PORT || 443;
 server.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
