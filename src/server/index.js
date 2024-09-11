@@ -21,11 +21,14 @@ const server = http.createServer(app);
 // Configurando o Socket.io com CORS
 const io = new Server(server, {
   cors: {
-    origin: "https://planning-poker-weld.vercel.app", // Substitua pela URL do seu front-end
+    origin: "https://planning-poker-weld.vercel.app",
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true,
   },
+  pingInterval: 30000, // Intervalo entre os pings
+  pingTimeout: 60000, // Tempo antes de considerar a sessão perdida
+  transports: ["websocket", "polling"],
 });
 
 let players = [];
