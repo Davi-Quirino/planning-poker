@@ -7,16 +7,11 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://planning-poker-weld.vercel.app", // Substitua pela URL do seu front-end
+    origin: "https://planning-poker-weld.vercel.app/", // Substitua pela URL do seu front-end
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true,
   },
-});
-
-// Rota padrão GET
-app.get("/", (req, res) => {
-  res.send("Bem-vindo ao servidor com Socket.io!");
 });
 
 // const io = require("socket.io")(443, {
@@ -83,4 +78,9 @@ io.on("connection", (socket) => {
 const PORT = process.env.PORT || 443;
 server.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
+});
+
+// Rota padrão GET
+app.get("/", (req, res) => {
+  res.send("Bem-vindo ao servidor com Socket.io!");
 });
