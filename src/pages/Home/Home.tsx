@@ -36,9 +36,7 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     // Inicializando a conexão WebSocket
-    socketRef.current = io(
-      "https://planning-poker-service.vercel.app/index.js"
-    );
+    socketRef.current = io("https://planning-poker-service.vercel.app/");
 
     // Recebendo a lista de jogadores ao conectar
     socketRef.current.on("currentPlayers", (players: PlayerGame[]) => {
