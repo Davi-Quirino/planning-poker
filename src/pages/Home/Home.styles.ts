@@ -3,12 +3,12 @@ import styled from "styled-components";
 export const TableContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 600px; // Ajuste a altura conforme necessário
+  height: 200px; // Ajuste a altura conforme necessário
 `;
 
 export const TableImage = styled.img`
-  width: 100%;
-  height: auto;
+  width: 1800px;
+  height: 800px;
 `;
 
 export const PlayerPosition = styled.div<{

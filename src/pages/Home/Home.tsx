@@ -213,7 +213,9 @@ const Home: React.FC = () => {
 
   return (
     <div>
-      <h1>Bem vindo to Planning Poker</h1>
+      <h1 style={{ display: "flex", justifyContent: "center" }}>
+        Bem vindos amigos e bem vindo Fernando!
+      </h1>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <UserForm onSubmit={handleJoin} />
       </Modal>
