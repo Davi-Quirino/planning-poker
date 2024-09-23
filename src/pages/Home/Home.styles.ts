@@ -2,13 +2,16 @@ import styled from "styled-components";
 
 export const TableContainer = styled.div`
   position: relative;
-  width: 100%;
-  height: 200px; // Ajuste a altura conforme necessário
+  width: 100vw; // A largura será 100% da largura da viewport
+  height: 50vh; // A altura será 50% da altura da viewport
+  overflow: hidden; // Evita que o conteúdo exceda o tamanho da mesa
 `;
 
 export const TableImage = styled.img`
-  width: 1800px;
-  height: 800px;
+  width: 100%; // Mantém a imagem ajustada ao container responsivamente
+  height: auto; // Mantém a proporção original da imagem
+  max-height: 100%;
+  object-fit: cover; // Garante que a imagem sempre cubra o container
 `;
 
 export const PlayerPosition = styled.div<{
@@ -17,6 +20,14 @@ export const PlayerPosition = styled.div<{
   position: absolute;
   top: ${(props) => props.position?.top || "0"};
   left: ${(props) => props.position?.left || "0"};
+  transform: translate(-50%, -50%); // Centraliza os jogadores no ponto definido
+  width: 5vw; // Controla o tamanho do jogador de forma relativa à viewport
+  height: 5vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  z-index: 5;
 `;
 
 export const RevealButton = styled.button`

@@ -98,16 +98,16 @@ const Home: React.FC = () => {
   }, []);
 
   const FIXED_POSITIONS = [
-    { top: "70%", left: "28%" },
-    { top: "70%", left: "61%" },
-    { top: "84%", left: "10%" },
-    { top: "84%", left: "79%" },
-    { top: "115%", left: "1%" },
-    { top: "115%", left: "88%" },
-    { top: "140%", left: "90%" },
-    { top: "140%", left: "1%" },
-    { top: "170%", left: "5%" },
-    { top: "170%", left: "87%" },
+    { top: "60%", left: "25%" },
+    { top: "60%", left: "75%" },
+    { top: "75%", left: "15%" },
+    { top: "75%", left: "85%" },
+    { top: "90%", left: "10%" },
+    { top: "90%", left: "90%" },
+    { top: "105%", left: "15%" },
+    { top: "105%", left: "85%" },
+    { top: "120%", left: "5%" },
+    { top: "120%", left: "95%" },
   ];
 
   // Função para adicionar um jogador ao jogo
