@@ -166,11 +166,21 @@ const Home: React.FC = () => {
 
   // Função para resetar o jogo localmente
   const resetGame = () => {
-    //setPlayers([]); // Reseta a lista de jogadores
+    setPlayers((prevPlayers) =>
+      prevPlayers.map((player) => ({
+        ...player,
+        selectedCard: undefined, // Reseta o card selecionado
+        hasVoted: false, // Reseta a votação
+        isRevealed: false, // Reseta a revelação individual
+      }))
+    );
     setIsRevealed(false);
-    setIsGameFinished(true);
+    setIsGameFinished(false); // Reseta o estado de finalização do jogo
     setIsResultsModalOpen(false); // Fecha o modal de resultados
-    //setIsModalOpen(true); // Reabre o modal de entrada
+
+    // setIsRevealed(false);
+    // setIsGameFinished(true);
+    // setIsResultsModalOpen(false);
   };
 
   // Função para calcular as médias dos jogadores

@@ -8,7 +8,7 @@ export const PlayerContainer = styled.div`
 export const PlayerName = styled.p`
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
-  color: #333;
+  color: white;
 `;
 
 export const PlayerCard = styled.div`

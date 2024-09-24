@@ -13,6 +13,11 @@ export const CardsContainer = styled.div`
 `;
 
 export const Card = styled.div<CardProps>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  width: 5%;
   background: linear-gradient(135deg, #000000, #ffd700);
   color: white;
   padding: 2rem 3rem;

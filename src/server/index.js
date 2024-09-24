@@ -82,9 +82,17 @@ io.on("connection", (socket) => {
 
   // Evento de novo jogo - reinicia o jogo para todos os jogadores
   socket.on("newGame", () => {
-    players = []; // Reseta os jogadores no servidor
-    isRevealed = false; // Reseta o estado de revelação
-    io.emit("newGame"); // Notifica todos os clientes para reiniciar o jogo
+    players = players.map((player) => ({
+      ...player,
+      selectedCard: undefined, // Reseta o campo selectedCard
+      hasVoted: false, // Reseta a votação
+      isRevealed: false, // Reseta o estado de revelação
+    }));
+    isRevealed = false; // Reseta o estado de revelação geral
+    io.emit("newGame", players);
+    // players = []; // Reseta os jogadores no servidor
+    // isRevealed = false; // Reseta o estado de revelação
+    // io.emit("newGame"); // Notifica todos os clientes para reiniciar o jogo
   });
 });
 
