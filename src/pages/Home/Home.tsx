@@ -32,6 +32,7 @@ const Home: React.FC = () => {
   const [isRevealed, setIsRevealed] = useState<boolean>(false);
   const [isGameFinished, setIsGameFinished] = useState<boolean>(false);
   const [isResultsModalOpen, setIsResultsModalOpen] = useState<boolean>(false);
+  const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
@@ -159,6 +160,7 @@ const Home: React.FC = () => {
       );
       socketRef.current?.emit("selectCard", updatedPlayer);
     }
+    setSelectedCard(value);
   };
 
   // Função para revelar as cartas
@@ -184,7 +186,7 @@ const Home: React.FC = () => {
     setIsRevealed(false);
     setIsGameFinished(false); // Reseta o estado de finalização do jogo
     setIsResultsModalOpen(false); // Fecha o modal de resultados
-
+    setSelectedCard(null);
     // setIsRevealed(false);
     // setIsGameFinished(true);
     // setIsResultsModalOpen(false);
@@ -264,7 +266,13 @@ const Home: React.FC = () => {
               />
             </PlayerPosition>
           ))}
-        {currentPlayerId !== null && <Cards onCardSelect={handleCardSelect} />}
+        {currentPlayerId !== null && (
+          <Cards
+            onCardSelect={handleCardSelect}
+            selectedCard={selectedCard} // Passa o valor da carta selecionada
+            resetSelectedCard={() => setSelectedCard(null)} // Função para resetar a seleção de carta
+          />
+        )}
       </TableContainer>
 
       {/* Modal de Resultados */}
