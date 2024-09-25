@@ -77,11 +77,8 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log(`Usuário desconectado: ${socket.id}`);
     players = players.filter((player) => player.socketId !== socket.id); // Remove o jogador da lista
+    io.emit("currentPlayers", players);
     io.emit("playerDisconnected", socket.id); // Notifica todos os clientes sobre a desconexão
-    if (isRevealed) {
-      // Emite uma atualização dos jogadores ativos para os clientes
-      io.emit("currentPlayers", players);
-    }
   });
 
   // Evento de novo jogo - reinicia o jogo para todos os jogadores
