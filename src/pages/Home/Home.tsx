@@ -82,6 +82,13 @@ const Home: React.FC = () => {
       setPlayers((prevPlayers) =>
         prevPlayers.filter((player) => player.socketId !== socketId)
       );
+
+      if (isRevealed) {
+        // Atualize o estado para remover o jogador desconectado mesmo após revelação
+        setPlayers((prevPlayers) =>
+          prevPlayers.filter((player) => player.socketId !== socketId)
+        );
+      }
     });
 
     // Desconectar ao fechar a aba
