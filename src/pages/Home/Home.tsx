@@ -35,6 +35,8 @@ const Home: React.FC = () => {
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const socketRef = useRef<Socket | null>(null);
 
+  console.log(players);
+
   useEffect(() => {
     // Inicializando a conexão WebSocket
     socketRef.current = io(
@@ -127,6 +129,7 @@ const Home: React.FC = () => {
       position: FIXED_POSITIONS[newPlayerIndex],
       hasVoted: false,
       isRevealed: false,
+      socketId: socketRef.current?.id,
     };
 
     socketRef.current?.emit("joinGame", newPlayer);
