@@ -55,6 +55,13 @@ io.on("connection", (socket) => {
 
   // Recebe a seleção de uma carta por um jogador
   socket.on("selectCard", (updatedPlayer) => {
+    // Verifica se o jogador já está no jogo
+    const existingPlayer = players.find((p) => p.socketId === socket.id);
+
+    if (existingPlayer) {
+      console.log("Jogador já está no jogo");
+      return;
+    }
     players = players.map((player) =>
       player.id === updatedPlayer.id ? updatedPlayer : player
     );
