@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
-import { io, Socket } from "socket.io-client";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import Modal from "../../components/Modal/Modal";
-import UserForm from "../../components/UseForm";
 import Player from "../../components/Player/Player";
 import Cards from "../../components/Cards/Cards";
 import {
@@ -11,16 +10,15 @@ import {
   RevealButton,
 } from "./Home.styles";
 import tableImage from "../../assets/images/table.png";
-import ResultsModal from "../../components/ResultsModal"; // Importando o novo modal
+import ResultsModal from "../../components/ResultsModal";
+import UserForm from "../../components/UseForm";
 
-// Definindo a interface do jogador
 interface PlayerGame {
   id: number;
   name: string;
   role: string;
-  selectedCard?: number;
-  position?: { top: string; left: string };
-  socketId?: string;
+  selectedCard?: number | null; // Allow null as a valid type
+  position: { top: string; left: string };
   hasVoted: boolean;
   isRevealed: boolean;
 }
@@ -33,163 +31,88 @@ const Home: React.FC = () => {
   const [isGameFinished, setIsGameFinished] = useState<boolean>(false);
   const [isResultsModalOpen, setIsResultsModalOpen] = useState<boolean>(false);
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
-  const socketRef = useRef<Socket | null>(null);
-
-  console.log(players);
+  const [averages, setAverages] = useState({
+    devAverage: 0,
+    qaAverage: 0,
+    overallAverage: 0,
+  });
 
   useEffect(() => {
-    // Inicializando a conexão WebSocket
-    socketRef.current = io(
-      "https://planning-poker-service.vercel.app/",
-      //"https://planning-poker-server-7dc4962373c4.herokuapp.com/",
-      {}
-    );
-
-    // Recebendo a lista de jogadores ao conectar
-    socketRef.current.on("currentPlayers", (players: PlayerGame[]) => {
-      setPlayers(players);
-    });
-
-    // Recebendo o estado de revelação das cartas
-    socketRef.current.on("revealState", (revealed: boolean) => {
-      setIsRevealed(revealed);
-    });
-
-    // Quando as cartas forem reveladas, abrir o modal de resultados
-    socketRef.current.on("revealCards", () => {
-      setIsRevealed(true);
-      setIsGameFinished(true);
-      setIsResultsModalOpen(true); // Abre o modal de resultados
-    });
-
-    // Reseta o jogo quando o servidor envia o evento
-    socketRef.current.on("newGame", () => {
-      resetGame();
-    });
-
-    // Quando um novo jogador entrar
-    socketRef.current.on("playerJoined", (player: PlayerGame) => {
-      setPlayers((prevPlayers) => [...prevPlayers, player]);
-    });
-
-    // Atualiza o estado de um jogador que selecionou uma carta
-    socketRef.current.on("cardSelected", (updatedPlayer: PlayerGame) => {
-      setPlayers((prevPlayers) =>
-        prevPlayers.map((player) =>
-          player.id === updatedPlayer.id ? updatedPlayer : player
-        )
-      );
-    });
-
-    // Quando um jogador desconectar
-    socketRef.current.on("playerDisconnected", (socketId: string) => {
-      setPlayers((prevPlayers) =>
-        prevPlayers.filter((player) => player.socketId !== socketId)
-      );
-    });
-
-    // Desconectar ao fechar a aba
-    const handleBeforeUnload = () => {
-      socketRef.current?.disconnect();
+    const fetchPlayers = async () => {
+      const { data } = await axios.get("http://localhost:443/players");
+      setPlayers(data);
+      setIsRevealed(data.some((player: PlayerGame) => player.isRevealed));
     };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      socketRef.current?.disconnect();
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
+    const intervalId = setInterval(fetchPlayers, 2000);
+    return () => clearInterval(intervalId);
   }, []);
 
-  const FIXED_POSITIONS = [
-    { top: "70%", left: "28%" },
-    { top: "70%", left: "61%" },
-    { top: "84%", left: "10%" },
-    { top: "84%", left: "79%" },
-    { top: "115%", left: "1%" },
-    { top: "115%", left: "88%" },
-    { top: "140%", left: "90%" },
-    { top: "140%", left: "1%" },
-    { top: "170%", left: "5%" },
-    { top: "170%", left: "87%" },
-  ];
-
-  // Função para adicionar um jogador ao jogo
-  const handleJoin = (name: string, role: string) => {
-    const newPlayerIndex = players.length;
-
-    if (newPlayerIndex >= FIXED_POSITIONS.length) {
-      console.log("Limite máximo de jogadores atingido!");
-      return;
-    }
-
-    const newPlayer: PlayerGame = {
-      id: Date.now(),
+  const handleJoin = async (name: string, role: string) => {
+    const { data: player } = await axios.post("http://localhost:443/join", {
       name,
       role,
-      position: FIXED_POSITIONS[newPlayerIndex],
-      hasVoted: false,
-      isRevealed: false,
-      socketId: socketRef.current?.id,
-    };
-
-    socketRef.current?.emit("joinGame", newPlayer);
-
-    setPlayers((prevPlayers) => [...prevPlayers, newPlayer]);
-    setCurrentPlayerId(newPlayer.id);
-    setIsModalOpen(false); // Fecha o modal de entrada
+    });
+    setPlayers((prev) => [...prev, player]);
+    setCurrentPlayerId(player.id);
+    setIsModalOpen(false);
   };
 
-  // Função para lidar com a seleção de uma carta
-  const handleCardSelect = (value: number) => {
-    const updatedPlayer = players.find(
-      (player) => player.id === currentPlayerId
-    );
-    if (updatedPlayer) {
-      updatedPlayer.selectedCard = value;
-      updatedPlayer.hasVoted = true; // Marca que o jogador votou
-      setPlayers(
-        players.map((player) =>
+  const handleCardSelect = async (value: number) => {
+    if (currentPlayerId) {
+      const { data } = await axios.post("http://localhost:443/select-card", {
+        id: currentPlayerId,
+        selectedCard: value,
+      });
+      setSelectedCard(value);
+      setPlayers((prev) =>
+        prev.map((player) =>
           player.id === currentPlayerId
             ? { ...player, selectedCard: value, hasVoted: true }
             : player
         )
       );
-      socketRef.current?.emit("selectCard", updatedPlayer);
     }
-    setSelectedCard(value);
   };
 
-  // Função para revelar as cartas
-  const handleRevealCards = () => {
-    socketRef.current?.emit("revealCards"); // Envia para o servidor que as cartas devem ser reveladas
+  const handleRevealCards = async () => {
+    await axios.post("http://localhost:443/reveal-cards");
+    setIsRevealed(true);
+    setIsGameFinished(true);
+    calculateAverages();
+    setIsResultsModalOpen(true);
   };
 
-  // Função para iniciar um novo jogo
-  const handleNewGame = () => {
-    socketRef.current?.emit("newGame"); // Envia o evento para o servidor
-  };
-
-  // Função para resetar o jogo localmente
-  const resetGame = () => {
-    setPlayers((prevPlayers) =>
-      prevPlayers.map((player) => ({
+  const handleNewGame = async () => {
+    await axios.post("http://localhost:443/new-game");
+    setPlayers((prev) =>
+      prev.map((player) => ({
         ...player,
-        selectedCard: undefined, // Reseta o card selecionado
-        hasVoted: false, // Reseta a votação
-        isRevealed: false, // Reseta a revelação individual
+        selectedCard: null,
+        hasVoted: false,
+        isRevealed: false,
       }))
     );
     setIsRevealed(false);
-    setIsGameFinished(false); // Reseta o estado de finalização do jogo
-    setIsResultsModalOpen(false); // Fecha o modal de resultados
-    setSelectedCard(null);
-    // setIsRevealed(false);
-    // setIsGameFinished(true);
-    // setIsResultsModalOpen(false);
+    setIsGameFinished(false);
+    setIsResultsModalOpen(false);
   };
 
-  // Função para calcular as médias dos jogadores
+  const handleLeave = async () => {
+    if (currentPlayerId) {
+      try {
+        await axios.post("http://localhost:443/leave", {
+          id: currentPlayerId,
+        });
+        setPlayers((prev) =>
+          prev.filter((player) => player.id !== currentPlayerId)
+        );
+      } catch (err) {
+        console.error("Erro ao sair do jogo:", err);
+      }
+    }
+  };
+
   const calculateAverages = () => {
     const devPlayers = players.filter(
       (player) =>
@@ -201,36 +124,38 @@ const Home: React.FC = () => {
         player.role.toLowerCase() === "qa" && player.selectedCard !== undefined
     );
 
-    // Cálculo da média de Developers
     const devAverage =
-      devPlayers.length > 0
-        ? devPlayers.reduce(
-            (acc, player) => acc + (player.selectedCard || 0),
-            0
-          ) / devPlayers.length
-        : 0;
-
-    // Cálculo da média de QAs
+      devPlayers.reduce((acc, curr) => acc + (curr.selectedCard || 0), 0) /
+      (devPlayers.length || 1);
     const qaAverage =
-      qaPlayers.length > 0
-        ? qaPlayers.reduce(
-            (acc, player) => acc + (player.selectedCard || 0),
-            0
-          ) / qaPlayers.length
-        : 0;
+      qaPlayers.reduce((acc, curr) => acc + (curr.selectedCard || 0), 0) /
+      (qaPlayers.length || 1);
+    const overallAverage = (devAverage + qaAverage) / 2;
 
-    // Cálculo da "média geral" como o somatório das médias de QA e Developer
-    const overallAverage = devAverage + qaAverage;
-
-    return { devAverage, qaAverage, overallAverage };
+    setAverages({ devAverage, qaAverage, overallAverage });
   };
 
-  const { devAverage, qaAverage, overallAverage } = calculateAverages();
+  useEffect(() => {
+    const handleUnload = () => {
+      console.log("unload disparado");
+      if (currentPlayerId) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://localhost:443/leave", false);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(JSON.stringify({ id: currentPlayerId }));
+      }
+    };
+
+    window.addEventListener("unload", handleUnload);
+    return () => {
+      window.removeEventListener("unload", handleUnload);
+    };
+  }, [currentPlayerId]);
 
   return (
     <div>
       <h1 style={{ display: "flex", justifyContent: "center" }}>
-        Bem vindos amigos e bem vindo Fernando!
+        Bem-vindos amigos e bem-vindo Fernando!
       </h1>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <UserForm onSubmit={handleJoin} />
@@ -238,7 +163,6 @@ const Home: React.FC = () => {
 
       <TableContainer>
         <TableImage src={tableImage} alt="Planning Poker Table" />
-
         {!isGameFinished ? (
           <RevealButton onClick={handleRevealCards}>
             Revelar Cartas
@@ -246,39 +170,37 @@ const Home: React.FC = () => {
         ) : (
           <RevealButton onClick={handleNewGame}>Novo Jogo</RevealButton>
         )}
-
-        {players.length > 0 &&
-          players.map((player) => (
-            <PlayerPosition key={player.id} position={player.position}>
-              <Player
-                name={player.name}
-                role={player.role}
-                selectedCard={
-                  isRevealed || player.id === currentPlayerId
-                    ? player.selectedCard
-                    : player.hasVoted
-                    ? "Votado"
-                    : undefined
-                }
-              />
-            </PlayerPosition>
-          ))}
-        {currentPlayerId !== null && (
+        {players.map((player) => (
+          <PlayerPosition key={player.id} position={player.position}>
+            <Player
+              name={player.name}
+              role={player.role}
+              selectedCard={
+                player.isRevealed
+                  ? player.selectedCard
+                  : player.selectedCard !== null &&
+                    player.selectedCard !== undefined
+                  ? "Votado"
+                  : undefined
+              }
+            />
+          </PlayerPosition>
+        ))}
+        {currentPlayerId && (
           <Cards
             onCardSelect={handleCardSelect}
-            selectedCard={selectedCard} // Passa o valor da carta selecionada
-            resetSelectedCard={() => setSelectedCard(null)} // Função para resetar a seleção de carta
+            selectedCard={selectedCard}
+            resetSelectedCard={() => setSelectedCard(null)}
           />
         )}
       </TableContainer>
 
-      {/* Modal de Resultados */}
       {isResultsModalOpen && (
         <ResultsModal
-          devAverage={devAverage}
-          qaAverage={qaAverage}
-          overallAverage={overallAverage}
           onClose={() => setIsResultsModalOpen(false)}
+          devAverage={averages.devAverage}
+          qaAverage={averages.qaAverage}
+          overallAverage={averages.overallAverage}
         />
       )}
     </div>
