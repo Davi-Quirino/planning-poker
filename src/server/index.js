@@ -8,8 +8,7 @@ app.use(express.json());
 let players = [];
 let isRevealed = false;
 
-// Tempo de inatividade permitido (em milissegundos)
-const INACTIVITY_LIMIT = 30000; // 30 segundos
+const INACTIVITY_LIMIT = 600000;
 
 // Função para atualizar o lastActivityTime de um jogador
 function updatePlayerActivity(id) {
