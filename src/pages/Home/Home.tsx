@@ -39,7 +39,9 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     const fetchPlayers = async () => {
-      const { data } = await axios.get("http://localhost:443/players");
+      const { data } = await axios.get(
+        "https://planning-poker-service.vercel.app/players"
+      );
       setPlayers(data);
       setIsRevealed(data.some((player: PlayerGame) => player.isRevealed));
     };
@@ -49,10 +51,13 @@ const Home: React.FC = () => {
   }, []);
 
   const handleJoin = async (name: string, role: string) => {
-    const { data: player } = await axios.post("http://localhost:443/join", {
-      name,
-      role,
-    });
+    const { data: player } = await axios.post(
+      "https://planning-poker-service.vercel.app/join",
+      {
+        name,
+        role,
+      }
+    );
     setPlayers((prev) => [...prev, player]);
     setCurrentPlayerId(player.id);
     setIsModalOpen(false);
@@ -60,10 +65,13 @@ const Home: React.FC = () => {
 
   const handleCardSelect = async (value: number) => {
     if (currentPlayerId) {
-      const { data } = await axios.post("http://localhost:443/select-card", {
-        id: currentPlayerId,
-        selectedCard: value,
-      });
+      const { data } = await axios.post(
+        "https://planning-poker-service.vercel.app/select-card",
+        {
+          id: currentPlayerId,
+          selectedCard: value,
+        }
+      );
       setSelectedCard(value);
       setPlayers((prev) =>
         prev.map((player) =>
@@ -76,7 +84,7 @@ const Home: React.FC = () => {
   };
 
   const handleRevealCards = async () => {
-    await axios.post("http://localhost:443/reveal-cards");
+    await axios.post("https://planning-poker-service.vercel.app/reveal-cards");
     setIsRevealed(true);
     setIsGameFinished(true);
     calculateAverages();
@@ -84,7 +92,7 @@ const Home: React.FC = () => {
   };
 
   const handleNewGame = async () => {
-    await axios.post("http://localhost:443/new-game");
+    await axios.post("https://planning-poker-service.vercel.app/new-game");
     setPlayers((prev) =>
       prev.map((player) => ({
         ...player,
@@ -101,7 +109,7 @@ const Home: React.FC = () => {
   const handleLeave = async () => {
     if (currentPlayerId) {
       try {
-        await axios.post("http://localhost:443/leave", {
+        await axios.post("https://planning-poker-service.vercel.app/leave", {
           id: currentPlayerId,
         });
         setPlayers((prev) =>
@@ -140,7 +148,11 @@ const Home: React.FC = () => {
       console.log("unload disparado");
       if (currentPlayerId) {
         const xhr = new XMLHttpRequest();
-        xhr.open("POST", "http://localhost:443/leave", false);
+        xhr.open(
+          "POST",
+          "https://planning-poker-service.vercel.app/leave",
+          false
+        );
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send(JSON.stringify({ id: currentPlayerId }));
       }
