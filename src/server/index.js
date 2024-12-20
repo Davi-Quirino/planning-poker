@@ -30,10 +30,18 @@ setInterval(removeInactivePlayers, 30000);
 
 // Posições disponíveis para os jogadores
 const availablePositions = [
-  { top: "10%", left: "20%" },
-  { top: "10%", left: "40%" },
-  { top: "10%", left: "60%" },
-  { top: "10%", left: "80%" },
+  { top: "7rem", left: "37rem" },
+  { top: "7rem", left: "65rem" },
+  { top: "7rem", left: "25rem" },
+  { top: "7rem", left: "78rem" },
+  { top: "10rem", left: "15rem" },
+  { top: "10rem", left: "90rem" },
+  { top: "15rem", left: "7rem" },
+  { top: "15rem", left: "98rem" },
+  { top: "20rem", left: "3rem" },
+  { top: "20rem", left: "100rem" },
+  { top: "25rem", left: "7rem" },
+  { top: "25rem", left: "98rem" },
 ];
 
 // Obter lista de jogadores
