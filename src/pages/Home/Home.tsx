@@ -138,7 +138,7 @@ const Home: React.FC = () => {
     const qaAverage =
       qaPlayers.reduce((acc, curr) => acc + (curr.selectedCard || 0), 0) /
       (qaPlayers.length || 1);
-    const overallAverage = (devAverage + qaAverage) / 2;
+    const overallAverage = devAverage + qaAverage;
 
     setAverages({ devAverage, qaAverage, overallAverage });
   };
