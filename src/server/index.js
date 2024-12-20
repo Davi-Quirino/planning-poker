@@ -26,7 +26,7 @@ function removeInactivePlayers() {
 }
 
 // Intervalo que executa a remoção de inativos a cada 30 segundos
-setInterval(removeInactivePlayers, INACTIVITY_LIMIT);
+setInterval(removeInactivePlayers, 30000);
 
 // Posições disponíveis para os jogadores
 const availablePositions = [
