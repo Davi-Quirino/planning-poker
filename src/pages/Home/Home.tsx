@@ -125,19 +125,26 @@ const Home: React.FC = () => {
     const devPlayers = players.filter(
       (player) =>
         player.role.toLowerCase() === "developer" &&
-        player.selectedCard !== undefined
-    );
-    const qaPlayers = players.filter(
-      (player) =>
-        player.role.toLowerCase() === "qa" && player.selectedCard !== undefined
+        typeof player.selectedCard === "number"
     );
 
-    const devAverage =
-      devPlayers.reduce((acc, curr) => acc + (curr.selectedCard || 0), 0) /
-      (devPlayers.length || 1);
-    const qaAverage =
-      qaPlayers.reduce((acc, curr) => acc + (curr.selectedCard || 0), 0) /
-      (qaPlayers.length || 1);
+    const qaPlayers = players.filter(
+      (player) =>
+        player.role.toLowerCase() === "qa" &&
+        typeof player.selectedCard === "number"
+    );
+
+    const devSum = devPlayers.reduce(
+      (acc, curr) => acc + (curr.selectedCard as number),
+      0
+    );
+    const qaSum = qaPlayers.reduce(
+      (acc, curr) => acc + (curr.selectedCard as number),
+      0
+    );
+
+    const devAverage = devPlayers.length > 0 ? devSum / devPlayers.length : 0;
+    const qaAverage = qaPlayers.length > 0 ? qaSum / qaPlayers.length : 0;
     const overallAverage = devAverage + qaAverage;
 
     setAverages({ devAverage, qaAverage, overallAverage });
