@@ -88,7 +88,11 @@ app.post("/select-card", (req, res) => {
   else res.status(404).send({ message: "Jogador não encontrado" });
 });
 
-// Revelar cartas
+// Armazene os resultados globalmente
+let devAverage = 0;
+let qaAverage = 0;
+let overallAverage = 0;
+
 app.post("/reveal-cards", (req, res) => {
   isRevealed = true;
   players = players.map((player) => ({
@@ -97,6 +101,22 @@ app.post("/reveal-cards", (req, res) => {
     isShowModal: true,
     lastActivityTime: Date.now(),
   }));
+
+  // Faz o cálculo aqui
+  const devPlayers = players.filter(
+    (p) => p.role.toLowerCase() === "developer" && p.selectedCard != null
+  );
+  const qaPlayers = players.filter(
+    (p) => p.role.toLowerCase() === "qa" && p.selectedCard != null
+  );
+
+  const devSum = devPlayers.reduce((acc, curr) => acc + curr.selectedCard, 0);
+  const qaSum = qaPlayers.reduce((acc, curr) => acc + curr.selectedCard, 0);
+
+  devAverage = devPlayers.length ? devSum / devPlayers.length : 0;
+  qaAverage = qaPlayers.length ? qaSum / qaPlayers.length : 0;
+  overallAverage = devAverage + qaAverage;
+
   res.status(200).send();
 });
 

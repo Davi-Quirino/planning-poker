@@ -22,6 +22,9 @@ interface PlayerGame {
   hasVoted: boolean;
   isRevealed: boolean;
   isShowModal: boolean;
+  devAverage: number;
+  qaAverage: number;
+  overallAverage: number;
 }
 
 const Home: React.FC = () => {
@@ -44,6 +47,11 @@ const Home: React.FC = () => {
         "https://planning-poker-service.vercel.app/players"
       );
       setPlayers(data);
+      setAverages({
+        devAverage: data[0].devAverage,
+        qaAverage: data[0].qaAverage,
+        overallAverage: data[0].overallAverage,
+      });
       setIsRevealed(data.some((player: PlayerGame) => player.isRevealed));
     };
 
@@ -65,19 +73,14 @@ const Home: React.FC = () => {
   };
 
   useEffect(() => {
-    // Se o polling encontrou algum jogador com isRevealed = true,
-    // significa que alguém clicou em "Revelar Cartas".
     const someoneRevealed = players.some((p) => p.isShowModal);
-    console.log("players", players);
-    console.log("someoneRevealed", someoneRevealed);
 
     if (someoneRevealed) {
       setIsRevealed(true);
       setIsGameFinished(true);
-      // Abre o modal de resultados só se ainda não estiver aberto
+
       setIsResultsModalOpen(true);
     } else {
-      // Se ninguém revelou, fecha o modal (caso você queira fechar em novo jogo).
       setIsResultsModalOpen(false);
     }
   }, [players]);
@@ -106,7 +109,7 @@ const Home: React.FC = () => {
     await axios.post("https://planning-poker-service.vercel.app/reveal-cards");
     setIsRevealed(true);
     setIsGameFinished(true);
-    calculateAverages();
+    //calculateAverages();
     setIsResultsModalOpen(true);
   };
 
@@ -157,34 +160,34 @@ const Home: React.FC = () => {
     }
   };
 
-  const calculateAverages = () => {
-    const devPlayers = players.filter(
-      (player) =>
-        player.role.toLowerCase() === "developer" &&
-        typeof player.selectedCard === "number"
-    );
+  // const calculateAverages = () => {
+  //   const devPlayers = players.filter(
+  //     (player) =>
+  //       player.role.toLowerCase() === "developer" &&
+  //       typeof player.selectedCard === "number"
+  //   );
 
-    const qaPlayers = players.filter(
-      (player) =>
-        player.role.toLowerCase() === "qa" &&
-        typeof player.selectedCard === "number"
-    );
+  //   const qaPlayers = players.filter(
+  //     (player) =>
+  //       player.role.toLowerCase() === "qa" &&
+  //       typeof player.selectedCard === "number"
+  //   );
 
-    const devSum = devPlayers.reduce(
-      (acc, curr) => acc + (curr.selectedCard as number),
-      0
-    );
-    const qaSum = qaPlayers.reduce(
-      (acc, curr) => acc + (curr.selectedCard as number),
-      0
-    );
+  //   const devSum = devPlayers.reduce(
+  //     (acc, curr) => acc + (curr.selectedCard as number),
+  //     0
+  //   );
+  //   const qaSum = qaPlayers.reduce(
+  //     (acc, curr) => acc + (curr.selectedCard as number),
+  //     0
+  //   );
 
-    const devAverage = devPlayers.length > 0 ? devSum / devPlayers.length : 0;
-    const qaAverage = qaPlayers.length > 0 ? qaSum / qaPlayers.length : 0;
-    const overallAverage = devAverage + qaAverage;
+  //   const devAverage = devPlayers.length > 0 ? devSum / devPlayers.length : 0;
+  //   const qaAverage = qaPlayers.length > 0 ? qaSum / qaPlayers.length : 0;
+  //   const overallAverage = devAverage + qaAverage;
 
-    setAverages({ devAverage, qaAverage, overallAverage });
-  };
+  //   setAverages({ devAverage, qaAverage, overallAverage });
+  // };
 
   useEffect(() => {
     const handleUnload = () => {
