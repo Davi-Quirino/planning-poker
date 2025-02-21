@@ -122,7 +122,7 @@ app.post("/close-reveal", (req, res) => {
   isRevealed = false;
   players = players.map((player) => ({
     ...player,
-    isRevealed: false,
+    isRevealed: true,
   }));
   res.status(200).send({ message: "Reveal fechado para todos" });
 });
