@@ -47,7 +47,6 @@ const Home: React.FC = () => {
         "https://planning-poker-service.vercel.app/players"
       );
       setPlayers(data);
-      console.log("data", data);
       if (data.length > 0) {
         setAverages({
           devAverage: data[0].devAverage,
@@ -162,35 +161,6 @@ const Home: React.FC = () => {
       console.error("Erro ao fechar o modal:", error);
     }
   };
-
-  // const calculateAverages = () => {
-  //   const devPlayers = players.filter(
-  //     (player) =>
-  //       player.role.toLowerCase() === "developer" &&
-  //       typeof player.selectedCard === "number"
-  //   );
-
-  //   const qaPlayers = players.filter(
-  //     (player) =>
-  //       player.role.toLowerCase() === "qa" &&
-  //       typeof player.selectedCard === "number"
-  //   );
-
-  //   const devSum = devPlayers.reduce(
-  //     (acc, curr) => acc + (curr.selectedCard as number),
-  //     0
-  //   );
-  //   const qaSum = qaPlayers.reduce(
-  //     (acc, curr) => acc + (curr.selectedCard as number),
-  //     0
-  //   );
-
-  //   const devAverage = devPlayers.length > 0 ? devSum / devPlayers.length : 0;
-  //   const qaAverage = qaPlayers.length > 0 ? qaSum / qaPlayers.length : 0;
-  //   const overallAverage = devAverage + qaAverage;
-
-  //   setAverages({ devAverage, qaAverage, overallAverage });
-  // };
 
   useEffect(() => {
     const handleUnload = () => {
