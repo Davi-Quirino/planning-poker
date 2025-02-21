@@ -63,6 +63,9 @@ app.post("/join", (req, res) => {
     position: availablePositions[positionIndex],
     lastActivityTime: Date.now(),
     isShowModal: false,
+    devAverage: 0,
+    qaAverage: 0,
+    overallAverage: 0,
   };
   players.push(newPlayer);
   res.status(201).json(newPlayer);

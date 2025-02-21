@@ -47,11 +47,14 @@ const Home: React.FC = () => {
         "https://planning-poker-service.vercel.app/players"
       );
       setPlayers(data);
-      setAverages({
-        devAverage: data[0].devAverage,
-        qaAverage: data[0].qaAverage,
-        overallAverage: data[0].overallAverage,
-      });
+      console.log("data", data);
+      if (data) {
+        setAverages({
+          devAverage: data[0].devAverage,
+          qaAverage: data[0].qaAverage,
+          overallAverage: data[0].overallAverage,
+        });
+      }
       setIsRevealed(data.some((player: PlayerGame) => player.isRevealed));
     };
 
