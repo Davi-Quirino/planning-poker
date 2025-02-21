@@ -62,6 +62,7 @@ app.post("/join", (req, res) => {
     isRevealed: false,
     position: availablePositions[positionIndex],
     lastActivityTime: Date.now(),
+    isShowModaL: false,
   };
   players.push(newPlayer);
   res.status(201).json(newPlayer);
@@ -93,6 +94,7 @@ app.post("/reveal-cards", (req, res) => {
   players = players.map((player) => ({
     ...player,
     isRevealed: true,
+    isShowModaL: true,
     lastActivityTime: Date.now(),
   }));
   res.status(200).send();
@@ -122,7 +124,7 @@ app.post("/close-reveal", (req, res) => {
   isRevealed = false;
   players = players.map((player) => ({
     ...player,
-    isRevealed: true,
+    isShowModaL: false,
   }));
   res.status(200).send({ message: "Reveal fechado para todos" });
 });

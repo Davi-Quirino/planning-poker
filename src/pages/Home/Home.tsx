@@ -21,6 +21,7 @@ interface PlayerGame {
   position: { top: string; left: string };
   hasVoted: boolean;
   isRevealed: boolean;
+  isShowModal: boolean;
 }
 
 const Home: React.FC = () => {
@@ -66,7 +67,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     // Se o polling encontrou algum jogador com isRevealed = true,
     // significa que alguém clicou em "Revelar Cartas".
-    const someoneRevealed = players.some((p) => p.isRevealed);
+    const someoneRevealed = players.some((p) => p.isShowModal);
     console.log("players", players);
     console.log("someoneRevealed", someoneRevealed);
 
