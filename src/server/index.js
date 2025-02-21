@@ -120,6 +120,13 @@ app.post("/reveal-cards", (req, res) => {
   qaAverage = qaPlayers.length ? qaSum / qaPlayers.length : 0;
   overallAverage = devAverage + qaAverage;
 
+  players = players.map((player) => ({
+    ...player,
+    devAverage: devAverage,
+    qaAverage: qaAverage,
+    overallAverage: overallAverage,
+  }));
+
   res.status(200).send();
 });
 

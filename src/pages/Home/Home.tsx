@@ -48,7 +48,7 @@ const Home: React.FC = () => {
       );
       setPlayers(data);
       console.log("data", data);
-      if (data) {
+      if (data.length > 0) {
         setAverages({
           devAverage: data[0].devAverage,
           qaAverage: data[0].qaAverage,
