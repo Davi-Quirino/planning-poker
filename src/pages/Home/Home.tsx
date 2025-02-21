@@ -63,6 +63,24 @@ const Home: React.FC = () => {
     setIsModalOpen(false);
   };
 
+  useEffect(() => {
+    // Se o polling encontrou algum jogador com isRevealed = true,
+    // significa que alguém clicou em "Revelar Cartas".
+    const someoneRevealed = players.some((p) => p.isRevealed);
+    console.log("players", players);
+    console.log("someoneRevealed", someoneRevealed);
+
+    if (someoneRevealed) {
+      setIsRevealed(true);
+      setIsGameFinished(true);
+      // Abre o modal de resultados só se ainda não estiver aberto
+      setIsResultsModalOpen(true);
+    } else {
+      // Se ninguém revelou, fecha o modal (caso você queira fechar em novo jogo).
+      setIsResultsModalOpen(false);
+    }
+  }, [players]);
+
   const handleCardSelect = async (value: number) => {
     if (currentPlayerId) {
       const { data } = await axios.post(
@@ -118,6 +136,23 @@ const Home: React.FC = () => {
       } catch (err) {
         console.error("Erro ao sair do jogo:", err);
       }
+    }
+  };
+
+  const handleCloseResultsModal = async () => {
+    try {
+      // 1) chama o backend para setar isRevealed=false para todos
+      await axios.post(
+        "https://planning-poker-service.vercel.app/close-reveal"
+      );
+
+      // 2) localmente, fecha o modal
+      setIsResultsModalOpen(false);
+
+      // 3) (opcional) força um novo fetch dos players pra atualizar imediato
+      //fetchPlayers();
+    } catch (error) {
+      console.error("Erro ao fechar o modal:", error);
     }
   };
 
@@ -216,7 +251,7 @@ const Home: React.FC = () => {
 
       {isResultsModalOpen && (
         <ResultsModal
-          onClose={() => setIsResultsModalOpen(false)}
+          onClose={handleCloseResultsModal}
           devAverage={averages.devAverage}
           qaAverage={averages.qaAverage}
           overallAverage={averages.overallAverage}

@@ -118,6 +118,15 @@ app.post("/leave", (req, res) => {
   res.status(200).send({ message: "Jogador removido" });
 });
 
+app.post("/close-reveal", (req, res) => {
+  isRevealed = false;
+  players = players.map((player) => ({
+    ...player,
+    isRevealed: false,
+  }));
+  res.status(200).send({ message: "Reveal fechado para todos" });
+});
+
 // Caso queira atualizar atividade em outras ações, basta chamar updatePlayerActivity(id)
 
 const PORT = process.env.PORT || 443;
